@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
@@ -30,6 +30,13 @@ const Game = () => {
     const numOfGeneratedCookies = calculateCookiesPerTick();
     setNumCookies(numOfGeneratedCookies + numCookies);
   }, 1000);
+
+  useEffect( () => {
+      document.title =  `${numCookies} cookies - Cookie clicker`
+      return () => {
+        document.title =  `Cookie clicker`
+      }
+  }, [numCookies])
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
