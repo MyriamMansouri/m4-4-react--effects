@@ -12,14 +12,24 @@ const items = [
 ];
 
 const Game = () => {
-  // TODO: Replace this with React state!
-  const numCookies = 100;
-  const purchasedItems = {
+  const [numCookies, setNumCookies] = React.useState(100);
+  const [purchasedItems, setPurchasedItems] = React.useState({
     cursor: 0,
     grandma: 0,
     farm: 0,
-  };
+  });
 
+  const handleClick = (id, cost) => {
+    if (numCookies - cost >= 0) {
+      setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
+      setNumCookies(numCookies - cost);
+    } else {
+      window.alert(
+        `You just can't. Item is ${cost} but you only have ${numCookies}.`
+      );
+    }
+  };
+  console.log(purchasedItems, numCookies);
   return (
     <Wrapper>
       <GameArea>
@@ -29,7 +39,10 @@ const Game = () => {
           <strong>0</strong> cookies per second
         </Indicator>
         <Button>
-          <Cookie src={cookieSrc} />
+          <Cookie
+            src={cookieSrc}
+            onClick={() => setNumCookies(numCookies + 1)}
+          />
         </Button>
       </GameArea>
 
@@ -37,13 +50,13 @@ const Game = () => {
         <SectionTitle>Items:</SectionTitle>
 
         {items.map((item) => (
-        <Item
+          <Item
             key={item.id}
             name={item.name}
             cost={item.cost}
             value={item.value}
             numOwned={purchasedItems[item.id]}
-            handleClick={()=>console.log('handleClick')}
+            handleClick={() => handleClick(item.id, item.cost)}
           />
         ))}
       </ItemArea>
