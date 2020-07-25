@@ -80,13 +80,14 @@ const Game = () => {
       <ItemArea>
         <SectionTitle>Items:</SectionTitle>
 
-        {items.map((item) => (
+        {items.map((item, index) => (
           <Item
             key={item.id}
             name={item.name}
             cost={item.cost}
             value={item.value}
             numOwned={purchasedItems[item.id]}
+            isFirst = {index === 0}
             handleClick={() => handleClick(item.id, item.cost)}
           />
         ))}

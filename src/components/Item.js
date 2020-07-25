@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 const ItemWrapper = styled.button`
@@ -14,9 +14,16 @@ const ItemWrapper = styled.button`
   }
 `;
 
-const Item = ({ name, cost, value, numOwned, handleClick }) => {
+const Item = ({ name, cost, value, numOwned, isFirst, handleClick }) => {
+  const itemRef = React.useRef(null);
+  useEffect(() => {
+    if (isFirst) {
+      itemRef.current.focus();
+    }
+  }, [isFirst]);
+
   return (
-    <ItemWrapper onClick={handleClick}>
+    <ItemWrapper onClick={handleClick} ref={itemRef}>
       <h4>{name}</h4>
       <p>
         Cost: {cost} cookies. Produces {value} cookies/second.
