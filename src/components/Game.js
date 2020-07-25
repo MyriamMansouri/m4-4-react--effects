@@ -8,15 +8,14 @@ import useInterval from "../hooks/use-interval.hook";
 import useKeydown from "../hooks/useKeydown.hook";
 import useDocumentTitle from "../hooks/useDocumentTitle.hook";
 
-const items = [
-  { id: "cursor", name: "Cursor", cost: 10, value: 1, click: 0 },
-  { id: "grandma", name: "Grandma", cost: 100, value: 10, click: 0 },
-  { id: "megacursor", name: "Mega Cursor", cost: 800, value: 0, click: 5 },
-  { id: "farm", name: "Farm", cost: 1000, value: 80, click: 0 },
-];
-
 const Game = () => {
   const [numCookies, setNumCookies] = React.useState(1000);
+  const [items, setItems] = React.useState([
+    { id: "cursor", name: "Cursor", cost: 10, value: 1, click: 0 },
+    { id: "grandma", name: "Grandma", cost: 100, value: 10, click: 0 },
+    { id: "megacursor", name: "Mega Cursor", cost: 100, value: 10, click: 5 },
+    { id: "farm", name: "Farm", cost: 1000, value: 80, click: 0 },
+  ]);
   const [purchasedItems, setPurchasedItems] = React.useState({
     cursor: 0,
     megacursor: 0,
@@ -25,9 +24,11 @@ const Game = () => {
   });
 
   const calculateCookiesPerClick = () => {
-    return items
-      .map((item) => item.click * purchasedItems[item.id])
-      .reduce((val, acc) => val + acc);
+    return (
+      items
+        .map((item) => item.click * purchasedItems[item.id])
+        .reduce((val, acc) => val + acc) + 1
+    );
   };
 
   const calculateCookiesPerTick = () => {
@@ -51,6 +52,11 @@ const Game = () => {
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
       setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
+      setItems(
+        items.map((item, index) =>
+          item.id === id ? { ...item, cost: item.cost * (index + 1) * 2 } : item
+        )
+      );
       setNumCookies((n) => n - cost);
     } else {
       window.alert(
