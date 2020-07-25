@@ -26,22 +26,38 @@ const Game = () => {
       .reduce((val, acc) => val + acc);
   };
 
+  const incrementCookies = () => {
+    setNumCookies((n) => n + 1);
+  };
+
   useInterval(() => {
     const numOfGeneratedCookies = calculateCookiesPerTick();
     setNumCookies(numOfGeneratedCookies + numCookies);
   }, 1000);
 
-  useEffect( () => {
-      document.title =  `${numCookies} cookies - Cookie clicker`
-      return () => {
-        document.title =  `Cookie clicker`
+  useEffect(() => {
+    document.title = `${numCookies} cookies - Cookie clicker`;
+    return () => {    
+      document.title = `Cookie clicker`;
+    };
+  }, [numCookies]);
+
+  useEffect(() => {
+    const handleKeydown = (e) => {
+      if (e.code === "Space") {
+        setNumCookies((n) => n + 1);
       }
-  }, [numCookies])
+    };
+    window.addEventListener("keydown", handleKeydown);
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
+  }, []);
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
       setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
-      setNumCookies(numCookies - cost);
+      setNumCookies((n) => n - cost);
     } else {
       window.alert(
         `You just can't. Item is ${cost} but you only have ${numCookies}.`
@@ -57,10 +73,7 @@ const Game = () => {
           <strong>{calculateCookiesPerTick()}</strong> cookies per second
         </Indicator>
         <Button>
-          <Cookie
-            src={cookieSrc}
-            onClick={() => setNumCookies(numCookies + 1)}
-          />
+          <Cookie src={cookieSrc} onClick={incrementCookies} />
         </Button>
       </GameArea>
 
