@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import cookieSrc from "../cookie.svg";
 import Item from "./Item";
 import useInterval from "../hooks/use-interval.hook";
+import useKeydown from "../hooks/useKeydown.hook";
+import useDocumentTitle from "../hooks/useDocumentTitle.hook";
 
 const items = [
   { id: "cursor", name: "Cursor", cost: 10, value: 1 },
@@ -35,24 +37,10 @@ const Game = () => {
     setNumCookies(numOfGeneratedCookies + numCookies);
   }, 1000);
 
-  useEffect(() => {
-    document.title = `${numCookies} cookies - Cookie clicker`;
-    return () => {    
-      document.title = `Cookie clicker`;
-    };
-  }, [numCookies]);
 
-  useEffect(() => {
-    const handleKeydown = (e) => {
-      if (e.code === "Space") {
-        setNumCookies((n) => n + 1);
-      }
-    };
-    window.addEventListener("keydown", handleKeydown);
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-    };
-  }, []);
+
+  useKeydown("Space", incrementCookies)
+  useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker")
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
