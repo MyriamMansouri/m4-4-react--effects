@@ -9,12 +9,19 @@ const ItemWrapper = styled.button`
   border: none;
   border-bottom: grey 1px solid;
   padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .num-owned {
+    font-size: 1.95rem;
+    padding: 0 15px;
+  }
   &:focus {
     outline: blue solid 3px;
   }
 `;
 
-const Item = ({ name, cost, value, numOwned, isFirst, handleClick }) => {
+const Item = ({ name, cost, value, click, numOwned, isFirst, handleClick }) => {
   const itemRef = React.useRef(null);
   useEffect(() => {
     if (isFirst) {
@@ -24,10 +31,14 @@ const Item = ({ name, cost, value, numOwned, isFirst, handleClick }) => {
 
   return (
     <ItemWrapper onClick={handleClick} ref={itemRef}>
-      <h4>{name}</h4>
-      <p>
-        Cost: {cost} cookies. Produces {value} cookies/second.
-      </p>
+      <div>
+        <h4>{name}</h4>
+        <p>
+          Cost: {cost} cookies. Produces {value} cookies/second.
+        </p>
+        <p>Increases cookies/click to {click}.</p>
+      </div>
+      <div className="num-owned">{numOwned}</div>
     </ItemWrapper>
   );
 };

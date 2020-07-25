@@ -9,18 +9,26 @@ import useKeydown from "../hooks/useKeydown.hook";
 import useDocumentTitle from "../hooks/useDocumentTitle.hook";
 
 const items = [
-  { id: "cursor", name: "Cursor", cost: 10, value: 1 },
-  { id: "grandma", name: "Grandma", cost: 100, value: 10 },
-  { id: "farm", name: "Farm", cost: 1000, value: 80 },
+  { id: "cursor", name: "Cursor", cost: 10, value: 1, click: 0 },
+  { id: "grandma", name: "Grandma", cost: 100, value: 10, click: 0 },
+  { id: "megacursor", name: "Mega Cursor", cost: 800, value: 0, click: 5 },
+  { id: "farm", name: "Farm", cost: 1000, value: 80, click: 0 },
 ];
 
 const Game = () => {
   const [numCookies, setNumCookies] = React.useState(1000);
   const [purchasedItems, setPurchasedItems] = React.useState({
     cursor: 0,
+    megacursor: 0,
     grandma: 0,
     farm: 0,
   });
+
+  const calculateCookiesPerClick = () => {
+    return items
+      .map((item) => item.click * purchasedItems[item.id])
+      .reduce((val, acc) => val + acc);
+  };
 
   const calculateCookiesPerTick = () => {
     return items
@@ -28,8 +36,8 @@ const Game = () => {
       .reduce((val, acc) => val + acc);
   };
 
-  const incrementCookies = () => {
-    setNumCookies((n) => n + 1);
+  const incrementCookies = (increment) => {
+    setNumCookies((n) => n + increment);
   };
 
   useInterval(() => {
@@ -37,10 +45,8 @@ const Game = () => {
     setNumCookies(numOfGeneratedCookies + numCookies);
   }, 1000);
 
-
-
-  useKeydown("Space", incrementCookies)
-  useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker")
+  useKeydown("Space", () => incrementCookies(calculateCookiesPerClick()));
+  useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker");
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
@@ -61,7 +67,10 @@ const Game = () => {
           <strong>{calculateCookiesPerTick()}</strong> cookies per second
         </Indicator>
         <Button>
-          <Cookie src={cookieSrc} onClick={incrementCookies} />
+          <Cookie
+            src={cookieSrc}
+            onClick={() => incrementCookies(calculateCookiesPerClick())}
+          />
         </Button>
       </GameArea>
 
@@ -74,8 +83,9 @@ const Game = () => {
             name={item.name}
             cost={item.cost}
             value={item.value}
+            click={item.click}
             numOwned={purchasedItems[item.id]}
-            isFirst = {index === 0}
+            isFirst={index === 0}
             handleClick={() => handleClick(item.id, item.cost)}
           />
         ))}
